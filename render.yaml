@@ -1,0 +1,26 @@
+# Render Blueprint — import repo on Render or use when creating Web Service
+# Dashboard → New → Blueprint → connect GitHub repo
+
+services:
+  - type: web
+    name: iminds-api
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: "4000"
+      - key: PAYMENT_GATEWAY
+        value: mock
+      - key: CORS_ORIGIN
+        value: https://iminds-tutorials.vercel.app
+      - key: JWT_SECRET
+        generateValue: true
+      # Set manually in Render dashboard after Neon is ready:
+      - key: DATABASE_URL
+        sync: false
