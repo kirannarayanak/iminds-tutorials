@@ -1,0 +1,35 @@
+{
+  "name": "iminds-web",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "next": "14.2.3",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "axios": "^1.6.7",
+    "react-hook-form": "^7.51.0",
+    "@hookform/resolvers": "^3.3.4",
+    "zod": "^3.22.4",
+    "react-hot-toast": "^2.4.1",
+    "lucide-react": "^0.363.0",
+    "date-fns": "^3.6.0",
+    "js-cookie": "^3.0.5",
+    "@tailwindcss/typography": "^0.5.12"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.30",
+    "@types/react": "^18.2.74",
+    "@types/react-dom": "^18.2.23",
+    "@types/js-cookie": "^3.0.6",
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8.4.38",
+    "tailwindcss": "^3.4.3",
+    "typescript": "^5.4.3"
+  }
+}
