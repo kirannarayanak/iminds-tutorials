@@ -83,8 +83,11 @@ npm run seed
 
 ### C4 · Deploy the website (Vercel)
 
+> **If you see `404: NOT_FOUND` on Vercel** → set **Root Directory** to `web` and redeploy.  
+> See **[VERCEL_404_FIX.md](./VERCEL_404_FIX.md)**
+
 1. https://vercel.com/new → **Import** your `iminds-tutorials` repo
-2. **Important:** set **Root Directory** → `web` (click Edit)
+2. **Important:** set **Root Directory** → `web` (click Edit) — **required**
 3. Framework: **Next.js** (auto-detected)
 4. **Environment Variables** — add:
 

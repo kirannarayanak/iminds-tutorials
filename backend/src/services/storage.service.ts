@@ -1,14 +1,10 @@
 /**
  * Storage Service Abstraction
- *
- * Currently backed by Supabase Storage.
- * To switch to Cloudflare R2 or S3:
- *   1. Set STORAGE_PROVIDER=r2 (or 's3') in .env
- *   2. Implement the R2/S3 branch below
- *   3. No other code changes needed
+ * mock — no external storage (API starts without Supabase; uploads store path only)
+ * supabase — Supabase Storage (requires SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY)
  */
 
-import { supabase, STORAGE_BUCKETS } from '../config/supabase';
+import { getSupabase, isSupabaseConfigured, STORAGE_BUCKETS } from '../config/supabase';
 
 type BucketKey = keyof typeof STORAGE_BUCKETS;
 
@@ -18,7 +14,13 @@ export interface UploadResult {
   publicUrl?: string;
 }
 
-const PROVIDER = process.env.STORAGE_PROVIDER || 'supabase';
+function resolveProvider(): string {
+  const configured = process.env.STORAGE_PROVIDER;
+  if (configured) return configured;
+  return isSupabaseConfigured ? 'supabase' : 'mock';
+}
+
+const PROVIDER = resolveProvider();
 
 export async function uploadFile(
   bucket: BucketKey,
@@ -26,7 +28,16 @@ export async function uploadFile(
   fileBuffer: Buffer,
   mimeType: string
 ): Promise<UploadResult> {
+  if (PROVIDER === 'mock') {
+    return {
+      storagePath: filePath,
+      provider: 'mock',
+      publicUrl: undefined,
+    };
+  }
+
   if (PROVIDER === 'supabase') {
+    const supabase = getSupabase();
     const { data, error } = await supabase.storage
       .from(STORAGE_BUCKETS[bucket])
       .upload(filePath, fileBuffer, { contentType: mimeType, upsert: true });
@@ -39,10 +50,8 @@ export async function uploadFile(
     };
   }
 
-  // Placeholder for Cloudflare R2 / AWS S3
   if (PROVIDER === 'r2') {
-    // TODO: implement with @aws-sdk/client-s3 + R2 endpoint
-    throw new Error('R2 storage not yet implemented — set STORAGE_PROVIDER=supabase');
+    throw new Error('R2 storage not yet implemented — set STORAGE_PROVIDER=mock or supabase');
   }
 
   throw new Error(`Unknown storage provider: ${PROVIDER}`);
@@ -53,7 +62,12 @@ export async function getSignedUrl(
   storagePath: string,
   expiresInSeconds = 3600
 ): Promise<string> {
+  if (PROVIDER === 'mock') {
+    return storagePath;
+  }
+
   if (PROVIDER === 'supabase') {
+    const supabase = getSupabase();
     const { data, error } = await supabase.storage
       .from(STORAGE_BUCKETS[bucket])
       .createSignedUrl(storagePath, expiresInSeconds);
@@ -66,12 +80,16 @@ export async function getSignedUrl(
 }
 
 export async function deleteFile(bucket: BucketKey, storagePath: string): Promise<void> {
+  if (PROVIDER === 'mock') return;
+
   if (PROVIDER === 'supabase') {
+    const supabase = getSupabase();
     const { error } = await supabase.storage
       .from(STORAGE_BUCKETS[bucket])
       .remove([storagePath]);
     if (error) throw new Error(`Delete failed: ${error.message}`);
     return;
   }
+
   throw new Error(`Delete not implemented for provider: ${PROVIDER}`);
 }

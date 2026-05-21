@@ -28,6 +28,7 @@ You only add these on a **Web Service** (not Environment Groups).
 | `PORT` | `4000` |
 | `PAYMENT_GATEWAY` | `mock` |
 | `CORS_ORIGIN` | `https://iminds-tutorials.vercel.app` |
+| `STORAGE_PROVIDER` | `mock` |
 
 8. Click **Deploy Web Service** at the bottom
 

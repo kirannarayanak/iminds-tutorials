@@ -17,6 +17,8 @@ services:
         value: "4000"
       - key: PAYMENT_GATEWAY
         value: mock
+      - key: STORAGE_PROVIDER
+        value: mock
       - key: CORS_ORIGIN
         value: https://iminds-tutorials.vercel.app
       - key: JWT_SECRET
